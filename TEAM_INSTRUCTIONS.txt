@@ -1,0 +1,305 @@
+CS 4450 – LIGHTWEIGHT PYTHON PARSER
+PROJECT DELIVERABLE 1 – TEAM INSTRUCTIONS
+
+==================================================
+1. PROJECT OVERVIEW
+==================================================
+
+Our group is creating a lightweight Python parser using ANTLR4.
+
+The professor provided a sample file called `project_deliverable_1.py`. Our grammar must be able to recognize all the Python statements in that file and generate a parse tree without syntax errors.
+
+We are using ANTLR4 instead of writing our own Python parser.
+
+Our main project file is `LightPython.g4`.
+
+The final submission requires only our completed `.g4` grammar file.
+
+==================================================
+2. WHAT HAS ALREADY BEEN COMPLETED
+==================================================
+
+The following work has been completed:
+
+- GitHub repository created and configured.
+- Initial ANTLR4 grammar created (`LightPython.g4`).
+- Basic program structure implemented.
+- Simple variable assignments implemented.
+- Integer and decimal values supported.
+- Single-quoted and double-quoted strings supported.
+- Variable identifiers supported.
+- Basic newline handling implemented.
+- Comments and whitespace handling added.
+- ANTLR4 parser successfully generated.
+- Generated Java files successfully compiled.
+- Basic assignment parsing tested successfully.
+
+The following four statements were tested:
+
+    assign1 = "20"
+    assign2 = 123
+    assign3 = 1.23
+    assign4 = assign1
+
+All four statements successfully generated a parse tree.
+
+IMPORTANT: The grammar is NOT finished. The remaining features are listed below.
+
+==================================================
+3. MEMBER 2 – ARITHMETIC AND OPERATORS
+==================================================
+
+Member 2 is responsible for adding arithmetic expression rules to `LightPython.g4`.
+
+TASK A: Arithmetic Operations
+
+Support the following operators:
+
+- Addition (+)
+- Subtraction (-)
+- Multiplication (*)
+- Division (/)
+- Modulo (%)
+
+Examples:
+
+    x = 1 + 2
+    y = 13 - 3
+    z = 4.2 * 10
+    result = 10 / x
+    remainder = 10 % 3
+
+TASK B: Compound Assignments
+
+Support the following:
+
+    x += 5
+    x -= 3
+    x *= 2
+    x /= 4
+
+TASK C: Negative Numbers and Generalization
+
+The grammar should also recognize:
+
+    x = -1000
+    y = 666
+    result = -x + 5
+
+TASK D: Operator Precedence
+
+Implement the correct order of arithmetic operations.
+
+For example:
+
+    result = 2 + 3 * 4
+    result = (2 + 3) * 4
+
+Multiplication and division must have higher precedence than addition and subtraction.
+
+Once completed, test these rules before merging changes.
+
+==================================================
+4. MEMBER 3 – LISTS, BOOLEANS, AND TESTING
+==================================================
+
+Member 3 is responsible for adding list and Boolean support and helping verify the grammar.
+
+TASK A: Python Lists
+
+Support list assignments, including:
+
+    array1 = [1, 2, 3, 4, 5]
+    array2 = ['a', 'b', 'c']
+    array3 = [1.6, 2.7, 3.8, 4.9, 5.0]
+
+Also test generalized examples:
+
+    numbers = []
+    values = [10, 20, 30]
+    items = [x, y, z]
+
+TASK B: Boolean Values
+
+Support:
+
+    flag = True
+    flag = False
+
+TASK C: Additional Testing
+
+Create additional examples to verify the grammar does not only recognize the exact values from the professor's sample.
+
+Also test invalid statements such as:
+
+    x =
+    numbers = [1, 2
+    result = 5 +
+
+The parser should report syntax errors for invalid statements.
+
+TASK D: Full Sample Testing
+
+Once Member 2's changes are integrated, test the complete `project_deliverable_1.py` file.
+
+All 21 assignment statements in the professor's sample must parse successfully without syntax errors.
+
+==================================================
+5. HOW TO WORK ON THE GROUP GITHUB REPOSITORY
+==================================================
+
+Repository:
+
+https://github.com/Sunnyg08/Ctrl-Alt-Elite-Parser-Project-
+
+STEP 1: Clone the repository if you have not already done so.
+
+    git clone https://github.com/Sunnyg08/Ctrl-Alt-Elite-Parser-Project-.git
+
+STEP 2: Enter the project folder.
+
+    cd Ctrl-Alt-Elite-Parser-Project-
+
+STEP 3: Pull the latest changes.
+
+    git pull origin main
+
+STEP 4: Create your own branch before editing.
+
+For Member 2:
+
+    git switch -c feature/arithmetic
+
+For Member 3:
+
+    git switch -c feature/lists-booleans
+
+STEP 5: Edit `LightPython.g4` and implement your assigned grammar rules.
+
+STEP 6: Test your changes.
+
+STEP 7: Commit and push your work.
+
+    git add LightPython.g4
+    git commit -m "Implement assigned ANTLR grammar features"
+    git push -u origin YOUR_BRANCH_NAME
+
+Replace YOUR_BRANCH_NAME with your actual branch name.
+
+STEP 8: Open a pull request on GitHub.
+
+The group should review and merge completed changes into `main`.
+
+IMPORTANT: Both members will be editing the grammar, especially the expression rules. Coordinate changes so one person's work does not overwrite another's.
+
+==================================================
+6. HOW TO RUN AND TEST THE PARSER
+==================================================
+
+The initial setup was tested on macOS using ANTLR4 version 4.13.2 and Java.
+
+STEP 1: Open Terminal and navigate to the project folder.
+
+STEP 2: Generate the parser.
+
+    antlr LightPython.g4
+
+This creates the Java parser and lexer files automatically.
+
+STEP 3: Compile the generated files.
+
+For the macOS Homebrew installation used during initial testing:
+
+    javac -cp "/opt/homebrew/Cellar/antlr/4.13.2/antlr-4.13.2-complete.jar:." LightPython*.java
+
+If no errors appear, compilation was successful.
+
+NOTE: The ANTLR JAR path may be different on other computers.
+
+STEP 4: Test the professor's sample file.
+
+    java -cp "/opt/homebrew/Cellar/antlr/4.13.2/antlr-4.13.2-complete.jar:." org.antlr.v4.gui.TestRig LightPython program -tree project_deliverable_1.py
+
+This prints the parse tree in Terminal.
+
+STEP 5: Check the results.
+
+A successful test should:
+
+- Generate a parse tree.
+- Recognize all 21 assignment statements.
+- Report no lexer or syntax errors.
+- Consume the entire input file.
+
+IMPORTANT: ANTLR may still print a parse tree even when errors occur. Check the Terminal output carefully.
+
+If the grammar reports errors, identify the failing statements, update the grammar, and repeat the test.
+
+==================================================
+7. FINAL GROUP TESTING
+==================================================
+
+After both members finish their assigned work, everyone should help verify the completed grammar.
+
+FINAL CHECKLIST:
+
+[ ] Arithmetic operations implemented
+[ ] Compound assignments implemented
+[ ] Negative numbers supported
+[ ] Operator precedence implemented
+[ ] Parentheses supported
+[ ] List assignments implemented
+[ ] Boolean values implemented
+[ ] Full professor sample parses without errors
+[ ] Additional generalized examples work
+[ ] Invalid syntax is reported
+[ ] Final grammar generates successfully
+[ ] Generated parser compiles successfully
+[ ] All changes merged into GitHub main branch
+[ ] Final `.g4` file reviewed by the group
+
+The assignment is complete only after the grammar successfully recognizes the full professor-provided sample and passes our additional tests.
+
+==================================================
+8. WHAT FILES DO WE SUBMIT?
+==================================================
+
+According to the professor's instructions, because our group is using ANTLR4, we only need to submit:
+
+    LightPython.g4
+
+We do NOT need to submit:
+
+- Generated Java parser files
+- Generated Java lexer files
+- `.class` files
+- `.tokens` files
+- `.interp` files
+- The old `parser.py` file
+- The professor's sample Python file
+- `README.md`
+- This team instructions file
+
+Those files are only for development, testing, or documentation.
+
+==================================================
+9. IMPORTANT FINAL NOTES
+==================================================
+
+1. Do not modify the professor's sample file to make the parser pass. Update the grammar instead.
+
+2. The grammar must support generalized Python statements, not only the exact examples from the sample.
+
+3. Everyone should test their own changes before merging them into `main`.
+
+4. Do not overwrite another member's grammar rules when merging changes.
+
+5. The final submission must contain the completed ANTLR4 grammar, not the unfinished starter grammar.
+
+6. This TEAM_INSTRUCTIONS.txt file is temporary and can be deleted after the group finishes the project.
+
+PROJECT STATUS: IN PROGRESS
+
+Initial grammar setup and basic assignment parsing are complete.
+
+Remaining features and final integration must be completed before submission.
