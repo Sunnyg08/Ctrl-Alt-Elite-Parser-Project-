@@ -1,4 +1,3 @@
-
 grammar LightPython;
 
 // CS 4450 - Principles of Programming Languages
@@ -7,7 +6,7 @@ grammar LightPython;
 // Group Members:
 // 1. Suneet Ghantaji
 // 2. Wesley Harpman
-// 3. Trevor Potthoff 
+// 3. Trevor Potthoff
 //
 // Purpose:
 // Build an ANTLR4 grammar for a simplified
@@ -18,11 +17,11 @@ grammar LightPython;
 // - Simple variable assignments
 // - Integer and decimal numbers
 // - Strings and variable identifiers
-//
-// Remaining Work:
-// - Arithmetic expressions
+// - Arithmetic expressions (+, -, *, /, %)
 // - Compound assignment operators
 // - Negative numbers and parentheses
+//
+// Remaining Work:
 // - Lists and Boolean values
 // - Full sample testing and error handling
 
@@ -40,40 +39,52 @@ program
 // ---------------------------------------
 // Part 2: Assignment Statements
 // Implemented: Suneet
+// Compound assignment: Wesley
 // ---------------------------------------
 
 statement
-    : IDENTIFIER '=' expression
+    : IDENTIFIER assignOp expression
     ;
 
-// TODO - Member 2:
-// Add compound assignment operators:
-// +=, -=, *=, /=
+// Plain and compound assignment operators
+assignOp
+    : '='
+    | '+='
+    | '-='
+    | '*='
+    | '/='
+    | '%='
+    ;
 
 
 // ---------------------------------------
 // Part 3: Expressions
 // Starter Implementation: Suneet
+// Arithmetic: Wesley
 // ---------------------------------------
 
+// Precedence: alternatives listed first bind tightest.
+//   1. Parentheses
+//   2. Negation (unary minus): -1000, -x, -(a + b)
+//   3. Multiplication, division, modulo
+//   4. Addition, subtraction
+// Binary operators are left-associative:
+//   10 - 3 - 2 is parsed as (10 - 3) - 2
 expression
+    : '(' expression ')'                          # parenExpr
+    | '-' expression                              # negateExpr
+    | expression op=('*' | '/' | '%') expression  # mulDivModExpr
+    | expression op=('+' | '-') expression        # addSubExpr
+    | atom                                        # atomExpr
+    ;
+
+// Single values. Lists and True/False can be
+// added here as new alternatives.
+atom
     : NUMBER
     | STRING
     | IDENTIFIER
     ;
-
-// TODO - Member 2:
-// Implement arithmetic expression parsing.
-// Support +, -, *, /, and %.
-//
-// Include:
-// - Operator precedence
-// - Negative numbers
-// - Parentheses
-// - Expressions involving variables
-//
-// Example:
-// result = 10 + 5 * 2
 
 
 // ---------------------------------------
@@ -91,8 +102,9 @@ expression
 // flag = True
 // flag = False
 //
-// Coordinate with Member 2 when extending
-// the expression rule.
+// Add both as new alternatives in the atom rule
+// above. Define TRUE/FALSE lexer rules ABOVE
+// IDENTIFIER so they aren't matched as names.
 
 
 // ---------------------------------------
@@ -100,7 +112,10 @@ expression
 // Basic Implementation: Suneet
 // ---------------------------------------
 
-// Integer and decimal values
+// Integer and decimal values.
+// No leading '-' on purpose: negative numbers are
+// handled by negateExpr. Otherwise "x-1" would lex
+// as IDENTIFIER NUMBER(-1) and fail to parse.
 NUMBER
     : [0-9]+ ('.' [0-9]+)?
     ;
