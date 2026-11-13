@@ -84,12 +84,15 @@ atom
     : NUMBER
     | STRING
     | IDENTIFIER
+    | lists
+    | TRUE
+    | FALSE
     ;
 
 
 // ---------------------------------------
 // Part 4: Lists and Boolean Values
-// TODO - Whoever wants it
+// Implemented - Trevor
 // ---------------------------------------
 
 // Implement list expressions.
@@ -106,6 +109,17 @@ atom
 // above. Define TRUE/FALSE lexer rules ABOVE
 // IDENTIFIER so they aren't matched as names.
 
+lists
+    : '[' (expression (',' expression)*)? ']'
+    ;
+
+TRUE
+    : 'True'
+    ;
+
+FALSE
+    : 'False'
+    ;
 
 // ---------------------------------------
 // Part 5: Lexer Rules
@@ -150,7 +164,7 @@ WS
 
 // ---------------------------------------
 // Part 6: Testing
-// TODO - whoever wants it
+// Tested - Trevor
 // ---------------------------------------
 
 // Test the completed grammar using:
