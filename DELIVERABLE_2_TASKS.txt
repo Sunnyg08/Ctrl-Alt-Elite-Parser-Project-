@@ -1,0 +1,139 @@
+CS 4450 – PROJECT DELIVERABLE 2
+GROUP TASKS AND INSTRUCTIONS
+
+PROJECT GOAL
+
+Extend our existing LightPython.g4 grammar to support the new Python features from project_deliverable_2.py.
+
+We are continuing from Deliverable 1, so do not delete or rewrite the existing grammar rules.
+
+The final grammar must parse the entire Deliverable 2 sample without syntax errors.
+
+----------------------------------------
+COMPLETED FROM DELIVERABLE 1 – SUNEET
+----------------------------------------
+
+- Basic program structure
+- Variable assignments
+- Arithmetic expressions
+- Compound assignments
+- Numbers and strings
+- Lists and Boolean values
+- Negative numbers and parentheses
+
+----------------------------------------
+MEMBER 2 – WESLEY
+----------------------------------------
+
+Implement comparison and logical expressions.
+
+Comparison operators:
+>  <  >=  <=  ==  !=
+
+Logical operators:
+and  or  not
+
+Examples:
+
+if x > 5:
+if x <= 10 and y == 20:
+if x != 3 or y >= 10:
+if (not flag) and x > 5:
+
+Make sure the operators follow the correct precedence and work with our existing arithmetic expressions.
+
+Coordinate with Trevor when integrating the condition rules.
+
+----------------------------------------
+MEMBER 3 – TREVOR
+----------------------------------------
+
+Implement conditional statements and Python indentation.
+
+Required statements:
+- if
+- elif
+- else
+
+The grammar must recognize indented blocks containing multiple statements.
+
+Example:
+
+if x > 5:
+    y = 10
+    z = 20
+else:
+    y = 0
+
+The existing grammar skips whitespace, so indentation handling needs to be updated.
+
+Use INDENT and DEDENT tokens or another appropriate ANTLR4 solution.
+
+Make sure the lexer handles the tabs used in the professor's sample.
+
+Also support multiple elif branches and nested conditional statements for generalization.
+
+Coordinate with Wesley because the conditional statements use his expression rules.
+
+----------------------------------------
+FINAL TESTING – EVERYONE
+----------------------------------------
+
+1. Merge the completed changes into main.
+2. Run ANTLR on LightPython.g4.
+3. Compile the generated Java files.
+4. Test project_deliverable_1.py to ensure old features still work.
+5. Test the entire project_deliverable_2.py file.
+6. Confirm there are no syntax or lexer errors.
+7. Test additional generalized if/elif/else examples.
+8. Generate a visual parse tree of the full Deliverable 2 sample.
+9. Save the complete tree as an image.
+
+----------------------------------------
+HOW TO TEST ON MAC
+----------------------------------------
+
+Generate:
+
+antlr LightPython.g4
+
+Compile (Homebrew ANTLR 4.13.2 installation):
+
+javac -cp "/opt/homebrew/Cellar/antlr/4.13.2/antlr-4.13.2-complete.jar:." LightPython*.java
+
+Test:
+
+java -cp "/opt/homebrew/Cellar/antlr/4.13.2/antlr-4.13.2-complete.jar:." org.antlr.v4.gui.TestRig LightPython program -tree project_deliverable_2.py
+
+Display visual parse tree:
+
+java -cp "/opt/homebrew/Cellar/antlr/4.13.2/antlr-4.13.2-complete.jar:." org.antlr.v4.gui.TestRig LightPython program -gui project_deliverable_2.py
+
+Commands may differ on Windows or Linux.
+
+----------------------------------------
+GITHUB INSTRUCTIONS
+----------------------------------------
+
+Clone or pull the latest repository.
+
+Create a separate feature branch for your assigned changes.
+
+Commit and push your branch to GitHub.
+
+Open a pull request for the group to review.
+
+Do not overwrite another member's grammar changes or force-push to main.
+
+----------------------------------------
+FINAL CANVAS SUBMISSION
+----------------------------------------
+
+Submit these TWO files:
+
+1. LightPython.g4
+2. An image showing the complete Deliverable 2 parse tree
+
+The professor does not request the generated Java files, the README, or the test Python files for submission.
+
+PROJECT STATUS: DELIVERABLE 2 IN PROGRESS

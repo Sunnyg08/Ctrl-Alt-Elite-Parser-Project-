@@ -1,7 +1,10 @@
+
 grammar LightPython;
 
+tokens { INDENT, DEDENT }
+
 // CS 4450 - Principles of Programming Languages
-// Project Deliverable 1 - Lightweight Python Parser
+// Project Deliverable 2 - Lightweight Python Parser
 //
 // Group Members:
 // 1. Suneet Ghantaji
@@ -9,48 +12,54 @@ grammar LightPython;
 // 3. Trevor Potthoff
 //
 // Purpose:
-// Build an ANTLR4 grammar for a simplified
-// version of the Python programming language.
+// Extend our ANTLR4 grammar to support
+// conditional statements in Python.
 //
-// Project Status: Deliverable 1 Completed
-//
-// Implemented Features:
-// - Basic program structure
-// - Variable assignments
-// - Integer and decimal numbers
-// - Strings and variable identifiers
-// - Arithmetic expressions (+, -, *, /, %)
-// - Compound assignment operators
+// Deliverable 1:
+// - Basic variable assignments
+// - Arithmetic expressions
+// - Compound assignments
+// - Numbers and strings
+// - Lists and Boolean values
 // - Negative numbers and parentheses
-// - Operator precedence
-// - Lists, including empty lists
-// - Boolean values (True and False)
 //
-// Testing:
-// - ANTLR4 parser generated successfully
-// - Generated Java files compiled successfully
-// - Instructor sample: 21 statements parsed
-// - Generalization test: 9 statements parsed
-// - No syntax errors reported in either test
+// Deliverable 2 Progress:
+// - Comparison operators
+// - Logical operators
+// - if, elif, and else grammar rules
+// - Basic block structure
+//
+// Remaining Work:
+// - Implement INDENT and DEDENT handling
+// - Test the complete Deliverable 2 sample
+// - Generate the final parse tree image
 
 
 // ---------------------------------------
 // Part 1: Program Structure
 // Implemented: Suneet
+// Updated for Deliverable 2
 // ---------------------------------------
 
 program
-    : (NEWLINE | statement NEWLINE)* statement? EOF
+    : (NEWLINE | statement)* simpleStatement? EOF
     ;
 
 
 // ---------------------------------------
 // Part 2: Assignment Statements
 // Implemented: Suneet
-// Compound assignment: Wesley
+// Compound assignments: Wesley
 // ---------------------------------------
 
+// A statement can be a regular assignment
+// or a conditional statement.
 statement
+    : simpleStatement NEWLINE
+    | ifStatement
+    ;
+
+simpleStatement
     : IDENTIFIER assignOp expression
     ;
 
@@ -66,28 +75,52 @@ assignOp
 
 
 // ---------------------------------------
-// Part 3: Expressions
+// Part 2B: Conditional Statements
+// Implemented: Suneet
+// ---------------------------------------
+
+// Supports if, elif, and else statements.
+// Each condition is followed by a code block.
+ifStatement
+    : IF condition ':' suite
+      (ELIF condition ':' suite)*
+      (ELSE ':' suite)?
+    ;
+
+// TODO - Wesley:
+// Complete indentation handling.
+// The lexer must generate INDENT and DEDENT.
+// This rule will be tested after that is done.
+suite
+    : NEWLINE INDENT
+      (NEWLINE | statement)+
+      DEDENT
+    ;
+
+
+// ---------------------------------------
+// Part 3: Arithmetic Expressions
 // Starter Implementation: Suneet
 // Arithmetic: Wesley
 // ---------------------------------------
 
-// Precedence: alternatives listed first bind tightest.
-//   1. Parentheses
-//   2. Negation (unary minus): -1000, -x, -(a + b)
-//   3. Multiplication, division, modulo
-//   4. Addition, subtraction
-// Binary operators are left-associative:
-//   10 - 3 - 2 is parsed as (10 - 3) - 2
+// Operator precedence:
+// 1. Parentheses
+// 2. Unary minus
+// 3. Multiplication, division, modulo
+// 4. Addition and subtraction
+//
+// Binary operations are left-associative.
 expression
     : '(' expression ')'                          # parenExpr
     | '-' expression                              # negateExpr
-    | expression op=('*' | '/' | '%') expression  # mulDivModExpr
-    | expression op=('+' | '-') expression        # addSubExpr
+    | expression op=('*' | '/' | '%') expression   # mulDivModExpr
+    | expression op=('+' | '-') expression         # addSubExpr
     | atom                                        # atomExpr
     ;
 
-// Single values, variable references,
-// lists, and Boolean values.
+// Values, variable references, lists,
+// and Boolean values.
 atom
     : NUMBER
     | STRING
@@ -99,28 +132,59 @@ atom
 
 
 // ---------------------------------------
-// Part 4: Lists and Boolean Values
-// Implemented - Trevor
+// Part 3B: Conditions
+// Implemented: Suneet
 // ---------------------------------------
 
-// Implement list expressions.
-//
-// Examples:
-// array1 = [1, 2, 3]
-// array2 = ['a', 'b', 'c']
-//
-// Also add Boolean literals:
-// flag = True
-// flag = False
-//
-// Add both as new alternatives in the atom rule
-// above. Define TRUE/FALSE lexer rules ABOVE
-// IDENTIFIER so they aren't matched as names.
+// Logical OR has the lowest precedence.
+condition
+    : orCondition
+    ;
 
+orCondition
+    : andCondition (OR andCondition)*
+    ;
+
+// Logical AND
+andCondition
+    : notCondition (AND notCondition)*
+    ;
+
+// Logical NOT and grouped conditions
+notCondition
+    : NOT notCondition
+    | '(' condition ')'
+    | comparison
+    ;
+
+// Comparison expressions
+comparison
+    : expression (comparisonOp expression)*
+    ;
+
+// Comparison operators
+comparisonOp
+    : '>'
+    | '<'
+    | '>='
+    | '<='
+    | '=='
+    | '!='
+    ;
+
+
+// ---------------------------------------
+// Part 4: Lists and Boolean Values
+// Implemented: Trevor
+// ---------------------------------------
+
+// Supports empty lists and lists
+// containing multiple expressions.
 lists
     : '[' (expression (',' expression)*)? ']'
     ;
 
+// Boolean values
 TRUE
     : 'True'
     ;
@@ -129,15 +193,15 @@ FALSE
     : 'False'
     ;
 
+
 // ---------------------------------------
 // Part 5: Lexer Rules
 // Basic Implementation: Suneet
+// Deliverable 2 Keywords: Suneet
 // ---------------------------------------
 
 // Integer and decimal values.
-// No leading '-' on purpose: negative numbers are
-// handled by negateExpr. Otherwise "x-1" would lex
-// as IDENTIFIER NUMBER(-1) and fail to parse.
+// Negative values are handled by expression.
 NUMBER
     : [0-9]+ ('.' [0-9]+)?
     ;
@@ -148,12 +212,38 @@ STRING
     | '\'' ( '\\' . | ~['\\\r\n] )* '\''
     ;
 
-// Variable names
+// Conditional keywords
+IF
+    : 'if'
+    ;
+
+ELIF
+    : 'elif'
+    ;
+
+ELSE
+    : 'else'
+    ;
+
+// Logical keywords
+AND
+    : 'and'
+    ;
+
+OR
+    : 'or'
+    ;
+
+NOT
+    : 'not'
+    ;
+
+// Variable identifiers
 IDENTIFIER
     : [a-zA-Z_] [a-zA-Z_0-9]*
     ;
 
-// New lines
+// Newline characters
 NEWLINE
     : '\r'? '\n'
     | '\r'
@@ -164,23 +254,33 @@ COMMENT
     : '#' ~[\r\n]* -> skip
     ;
 
-// Ignore spaces and tabs
+// TODO - Wesley:
+// Currently spaces and tabs are skipped.
+// Update this logic so that leading
+// indentation generates INDENT/DEDENT.
+//
+// Blank lines, tabs, spaces, and the end
+// of the file need to be handled properly.
 WS
     : [ \t]+ -> skip
     ;
 
 
 // ---------------------------------------
-// Part 6: Testing and Verification
-// Tested: Group Members
+// Part 6: Testing
+// Deliverable 1: Group Members
+// Deliverable 2: Trevor and Group
 // ---------------------------------------
 
-// tested with project_deliverable_1.py
-// All 21 statements parsed successfully 
+// Deliverable 1:
+// Tested with project_deliverable_1.py.
+// All 21 statements parsed successfully.
 //
-// also tested additional examples with 
-// negative numbers, arithmetic operations,
-// lists, and Boolean values.
-// 
-// Both tests ran without syntax errors.
+// Deliverable 2:
+// TODO - Test project_deliverable_2.py.
+// Check if, elif, else, and indentation.
+// Test additional conditional statements.
+// Generate a parse tree image.
 //
+// Final testing will be completed after
+// the indentation rules are implemented.
