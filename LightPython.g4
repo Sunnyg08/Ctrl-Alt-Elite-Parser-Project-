@@ -1,7 +1,120 @@
-
 grammar LightPython;
 
 tokens { INDENT, DEDENT }
+
+// ---------------------------------------
+// Indentation Handling (INDENT / DEDENT)
+// Implemented: Wesley
+// ---------------------------------------
+// Python uses indentation instead of braces, so the
+// lexer must turn changes in leading whitespace into
+// INDENT and DEDENT tokens. ANTLR has no built-in way
+// to do this, so nextToken() is overridden below.
+//
+// How it works:
+// - The NEWLINE rule also swallows any blank lines,
+//   comment-only lines, and the leading tabs/spaces of
+//   the next real line.
+// - That leading whitespace is measured. Deeper than
+//   the current level -> push it and emit INDENT.
+//   Shallower -> pop levels and emit one DEDENT each.
+// - At end of file, a final NEWLINE is added if the
+//   last line had none, then every open block is
+//   closed with DEDENTs.
+// - A tab counts as moving to the next multiple of 8,
+//   matching Python.
+//
+// NOTE: this is Java code, so the grammar must be run
+// through the generated Java parser (TestRig). The
+// antlr4-parse interpreter ignores this code and will
+// not produce INDENT/DEDENT tokens.
+@lexer::members {
+    private java.util.LinkedList<Token> pending = new java.util.LinkedList<>();
+    private java.util.ArrayDeque<Integer> indents = new java.util.ArrayDeque<>();
+    private Token lastToken = null;
+
+    @Override
+    public Token nextToken() {
+        if (indents.isEmpty()) {
+            indents.push(0);
+        }
+        if (!pending.isEmpty()) {
+            return emitPending();
+        }
+
+        Token t = super.nextToken();
+
+        if (t.getType() == NEWLINE) {
+            handleNewline(t);
+            return emitPending();
+        }
+
+        if (t.getType() == EOF) {
+            boolean needsNewline = lastToken != null
+                && lastToken.getType() != NEWLINE
+                && lastToken.getType() != LightPythonParser.DEDENT
+                && lastToken.getType() != EOF;
+            if (needsNewline) {
+                pending.add(makeToken(NEWLINE, "\n", t));
+            }
+            while (indents.peek() > 0) {
+                indents.pop();
+                pending.add(makeToken(LightPythonParser.DEDENT, "<DEDENT>", t));
+            }
+            pending.add(t);
+            return emitPending();
+        }
+
+        lastToken = t;
+        return t;
+    }
+
+    private Token emitPending() {
+        Token t = pending.poll();
+        lastToken = t;
+        return t;
+    }
+
+    private void handleNewline(Token t) {
+        pending.add(makeToken(NEWLINE, "\n", t));
+
+        // Indentation at end of file is handled by the EOF case
+        if (_input.LA(1) == EOF) {
+            return;
+        }
+
+        // Measure the whitespace after the last line break
+        String text = t.getText();
+        int start = Math.max(text.lastIndexOf('\n'), text.lastIndexOf('\r')) + 1;
+        int width = 0;
+        for (int i = start; i < text.length(); i++) {
+            if (text.charAt(i) == '\t') {
+                width += 8 - (width % 8);
+            } else {
+                width++;
+            }
+        }
+
+        if (width > indents.peek()) {
+            indents.push(width);
+            pending.add(makeToken(LightPythonParser.INDENT, "<INDENT>", t));
+        } else {
+            while (width < indents.peek()) {
+                indents.pop();
+                pending.add(makeToken(LightPythonParser.DEDENT, "<DEDENT>", t));
+            }
+        }
+    }
+
+    private Token makeToken(int type, String text, Token from) {
+        CommonToken token = new CommonToken(type, text);
+        token.setLine(from.getLine());
+        token.setCharPositionInLine(from.getCharPositionInLine());
+        token.setStartIndex(from.getStartIndex());
+        token.setStopIndex(from.getStartIndex() - 1);
+        return token;
+    }
+}
 
 // CS 4450 - Principles of Programming Languages
 // Project Deliverable 2 - Lightweight Python Parser
@@ -29,8 +142,9 @@ tokens { INDENT, DEDENT }
 // - if, elif, and else grammar rules
 // - Basic block structure
 //
+// - INDENT and DEDENT handling
+//
 // Remaining Work:
-// - Implement INDENT and DEDENT handling
 // - Test the complete Deliverable 2 sample
 // - Generate the final parse tree image
 
@@ -87,10 +201,9 @@ ifStatement
       (ELSE ':' suite)?
     ;
 
-// TODO - Wesley:
-// Complete indentation handling.
-// The lexer must generate INDENT and DEDENT.
-// This rule will be tested after that is done.
+// A block: the line break after ':', then one or
+// more indented statements, closed by DEDENT.
+// INDENT/DEDENT come from the lexer code at the top.
 suite
     : NEWLINE INDENT
       (NEWLINE | statement)+
@@ -243,10 +356,21 @@ IDENTIFIER
     : [a-zA-Z_] [a-zA-Z_0-9]*
     ;
 
-// Newline characters
+// Newline characters.
+// Also absorbs blank lines, comment-only lines, and the
+// leading indentation of the next line, so the lexer
+// code at the top can measure the indentation.
 NEWLINE
+    : LINE_BREAK ( [ \t]* LINE_COMMENT? LINE_BREAK )* [ \t]*
+    ;
+
+fragment LINE_BREAK
     : '\r'? '\n'
     | '\r'
+    ;
+
+fragment LINE_COMMENT
+    : '#' ~[\r\n]*
     ;
 
 // Ignore comments
@@ -254,13 +378,9 @@ COMMENT
     : '#' ~[\r\n]* -> skip
     ;
 
-// TODO - Wesley:
-// Currently spaces and tabs are skipped.
-// Update this logic so that leading
-// indentation generates INDENT/DEDENT.
-//
-// Blank lines, tabs, spaces, and the end
-// of the file need to be handled properly.
+// Spaces and tabs between tokens are skipped.
+// Leading indentation never reaches this rule,
+// because NEWLINE consumes it first.
 WS
     : [ \t]+ -> skip
     ;
