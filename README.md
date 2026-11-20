@@ -2,11 +2,13 @@
 
 ## Project Overview
 
-This project is being developed for CS 4450 – Principles of Programming Languages at the University of Missouri–Columbia.
+This project was developed for CS 4450 – Principles of Programming Languages at the University of Missouri–Columbia.
 
-The goal of this project is to create a lightweight Python parser using ANTLR4. The parser will recognize and analyze a simplified version of Python syntax based on the sample code provided by the instructor.
+The goal of this project is to build a lightweight Python parser using ANTLR4. The parser recognizes a simplified version of Python syntax based on the sample programs provided by the instructor.
 
-The parser should also support generalization, meaning it must recognize different variable names, numeric values, and expressions beyond those included in the original sample.
+The project also focuses on generalization, meaning the grammar should work with different variable names, numbers, expressions, and conditional statements beyond the original sample code.
+
+The project currently supports the requirements demonstrated in Deliverables 1 and 2.
 
 ## Group Members
 
@@ -16,23 +18,27 @@ The parser should also support generalization, meaning it must recognize differe
 
 ## Project Files
 
-- `LightPython.g4` – Main ANTLR4 grammar file containing the lexer and parser rules.
-- `project_deliverable_1.py` – Sample Python program provided by the instructor for testing.
-- `README.md` – Project documentation, setup instructions, and development progress.
-- `.gitignore` – Excludes generated ANTLR files and temporary files from version control.
+- `LightPython.g4` – Main ANTLR4 grammar containing the lexer, parser rules, and indentation handling.
+- `project_deliverable_1.py` – Instructor's sample program for Deliverable 1.
+- `project_deliverable_2.py` – Instructor's sample program for Deliverable 2.
+- `DELIVERABLE_2_TASKS.txt` – Group development instructions and task assignments.
+- `README.md` – Project information, setup instructions, testing, and progress.
+- `.gitignore` – Excludes generated files and temporary files from version control.
+
+The repository may also contain earlier project files from the initial development stages.
 
 ## Requirements
 
-The following tools are required to generate and test the parser locally:
+The following tools are used to generate and test the parser:
 
-- ANTLR4 (version 4.13.2 used during initial testing)
+- ANTLR4 (version 4.13.2 used during development)
 - Java Development Kit (JDK)
 - Terminal or command-line interface
-- Any text editor, such as VS Code or TextEdit
+- A text editor such as VS Code or TextEdit
 
-No Python packages are required to generate and test the ANTLR4 Java parser.
+The grammar uses Java code for indentation handling, so the generated Java lexer and parser must be compiled and used for testing.
 
-ANTLR Lab (https://lab.antlr.org/) may also be used for browser-based testing.
+No additional Python packages are required.
 
 ## Setup Instructions
 
@@ -45,6 +51,12 @@ git clone https://github.com/Sunnyg08/Ctrl-Alt-Elite-Parser-Project-.git
 cd Ctrl-Alt-Elite-Parser-Project-
 ```
 
+If the repository is already cloned, pull the latest changes:
+
+```bash
+git pull origin main
+```
+
 ### 2. Generate the ANTLR Parser
 
 Run:
@@ -53,145 +65,217 @@ Run:
 antlr LightPython.g4
 ```
 
-This generates the Java lexer, parser, listener, and supporting files from the grammar.
+This generates the Java lexer, parser, listener, and other supporting files.
 
 ### 3. Compile the Generated Files
 
-For the Homebrew ANTLR 4.13.2 installation used during initial testing on macOS:
+On the Mac used for testing, ANTLR4 was installed through Homebrew.
+
+Compile using:
 
 ```bash
 javac -cp "/opt/homebrew/Cellar/antlr/4.13.2/antlr-4.13.2-complete.jar:." LightPython*.java
 ```
 
-The ANTLR JAR location may differ depending on the operating system and installation method.
+The ANTLR JAR path may be different on other operating systems.
 
-### 4. Test the Parser
-
-To test the current starter grammar, create a file named `starter_test.py` containing:
-
-```python
-assign1 = "20"
-assign2 = 123
-assign3 = 1.23
-assign4 = assign1
-```
+### 4. Test Deliverable 1
 
 Run:
 
 ```bash
-java -cp "/opt/homebrew/Cellar/antlr/4.13.2/antlr-4.13.2-complete.jar:." org.antlr.v4.gui.TestRig LightPython program -tree starter_test.py
+java -cp "/opt/homebrew/Cellar/antlr/4.13.2/antlr-4.13.2-complete.jar:." org.antlr.v4.gui.TestRig LightPython program -tree project_deliverable_1.py
 ```
 
-This command generates a text-based parse tree.
+This prints a text-based parse tree for the instructor's first sample program.
 
-After all grammar features have been implemented, replace `starter_test.py` with `project_deliverable_1.py` to test the instructor's complete sample.
+### 5. Test Deliverable 2
 
-## Current Progress
+Run:
 
-### Completed – Initial Grammar Setup
-
-- Created the `LightPython.g4` ANTLR4 grammar file.
-- Implemented basic program structure.
-- Implemented simple variable assignment statements.
-- Added lexer rules for variable identifiers.
-- Added support for integer and decimal values.
-- Added support for single-quoted and double-quoted strings.
-- Implemented newline handling and comment skipping.
-- Successfully generated the ANTLR Java parser files.
-- Successfully compiled the generated Java files.
-- Successfully generated a parse tree for four basic assignment statements.
-
-### Initial Test Results
-
-The starter grammar was tested using:
-
-```python
-assign1 = "20"
-assign2 = 123
-assign3 = 1.23
-assign4 = assign1
+```bash
+java -cp "/opt/homebrew/Cellar/antlr/4.13.2/antlr-4.13.2-complete.jar:." org.antlr.v4.gui.TestRig LightPython program -tree project_deliverable_2.py
 ```
 
-All four statements were successfully parsed without reported syntax errors.
+This prints a text-based parse tree for the second sample program, including conditional statements and indented blocks.
 
-The initial test confirms that basic assignments, numbers, strings, and variable references are recognized.
+### 6. Generate a Graphical Parse Tree
 
-## Remaining Work and Group Responsibilities
+To display the Deliverable 2 parse tree visually, run:
 
-### Member 2 – Arithmetic Expressions and Operators
+```bash
+java -cp "/opt/homebrew/Cellar/antlr/4.13.2/antlr-4.13.2-complete.jar:." org.antlr.v4.gui.TestRig LightPython program -gui project_deliverable_2.py
+```
 
-Implement the following features in `LightPython.g4`:
+The graphical parse tree can then be exported or saved as an image for the Deliverable 2 Canvas submission.
 
-- Addition (`+`)
-- Subtraction (`-`)
-- Multiplication (`*`)
-- Division (`/`)
-- Modulo (`%`)
-- Compound assignment operators (`+=`, `-=`, `*=`, `/=`)
+The image must show the complete parse tree for the instructor's sample.
+
+## Deliverable 1 – Implemented Features
+
+The following features were implemented for Deliverable 1:
+
+- Basic program structure
+- Variable assignments
+- Integer and decimal numbers
+- Single-quoted and double-quoted strings
+- Variable identifiers
+- Arithmetic expressions (`+`, `-`, `*`, `/`, `%`)
+- Compound assignments (`+=`, `-=`, `*=`, `/=`, `%=`)
 - Negative numbers
 - Parenthesized expressions
 - Operator precedence
+- Lists containing numbers, strings, and expressions
+- Empty lists
+- Boolean values (`True` and `False`)
+- Newline handling and comments
 
-Example statements to support:
+### Deliverable 1 Testing
+
+The grammar was tested using `project_deliverable_1.py`.
+
+Results:
+
+- ANTLR parser generation successful
+- Generated Java files compiled successfully
+- All 21 instructor sample statements parsed
+- No syntax errors reported
+
+An additional generalization test containing 9 statements was also completed successfully.
+
+These tests included different numbers, negative values, arithmetic expressions, lists, and Boolean values.
+
+**Deliverable 1 Status: Completed**
+
+## Deliverable 2 – Implemented Features
+
+Deliverable 2 extends the existing grammar to support conditional statements and logical expressions.
+
+The following features were added:
+
+- `if` statements
+- `elif` statements
+- `else` statements
+- Comparison operators (`>`, `<`, `>=`, `<=`, `==`, `!=`)
+- Logical operators (`and`, `or`, `not`)
+- Parenthesized logical conditions
+- Logical operator precedence
+- Indented code blocks
+- `INDENT` and `DEDENT` token generation
+- Multiple statements inside conditional blocks
+- Handling of tabs and spaces for indentation
+- End-of-file block handling
+
+### Conditional Statement Examples
+
+The grammar supports syntax such as:
 
 ```python
-result = 10 + 5
-total = 4 * 3
-value = 20 / 2 + 5
-number = -1000
-result += 10
+if x > 5:
+    y = 10
+    z = 20
 ```
 
-### Member 3 – Lists, Boolean Values, and Testing
-
-Implement and verify:
-
-- List expressions using square brackets.
-- Lists containing integers, decimals, and strings.
-- Boolean values (`True` and `False`).
-- Additional generalized test cases.
-- Testing the complete instructor-provided sample.
-- Identifying and resolving remaining syntax errors.
-
-Example statements to support:
+It also supports `if` and `else`:
 
 ```python
-numbers = [1, 2, 3, 4, 5]
-letters = ['a', 'b', 'c']
-values = [1.5, 2.5, 3.5]
-flag = True
+if x <= 10 and y == 20:
+    result = 1
+else:
+    result = 0
 ```
 
-### All Group Members – Final Integration
+And `if`, `elif`, and `else`:
 
-After completing the assigned sections, all members should:
+```python
+if x != 5 or y >= 10:
+    flag = True
+elif (not flag) and x > 2:
+    flag = False
+else:
+    result = -1
+```
 
-1. Merge their grammar changes into the main project.
-2. Review the grammar rules for compatibility.
-3. Regenerate the ANTLR parser.
-4. Compile the generated parser files.
-5. Test the full `project_deliverable_1.py` file.
-6. Confirm the entire sample generates a parse tree without syntax errors.
-7. Test generalized examples not included in the instructor's sample.
-8. Review and finalize the grammar before submission.
+### Indentation Handling
+
+Python uses indentation to group statements into blocks.
+
+To support this, the grammar includes Java lexer code that generates `INDENT` and `DEDENT` tokens.
+
+The implementation tracks indentation levels using a stack. It also handles newlines, blank lines, and indentation changes.
+
+This allows conditional statements to contain multiple assignments and separate `if`, `elif`, and `else` blocks.
+
+### Deliverable 2 Testing
+
+The updated grammar was tested using `project_deliverable_2.py`.
+
+Results:
+
+- ANTLR parser generation successful
+- Generated Java files compiled successfully
+- Entire instructor sample parsed
+- `if`, `elif`, and `else` statements recognized
+- Comparison and logical expressions recognized
+- `INDENT` and `DEDENT` tokens generated
+- No syntax errors reported during the sample test
+- Deliverable 1 sample retested successfully
+
+The generated parse tree showed the original assignment statements followed by the new conditional structures.
+
+**Deliverable 2 Coding Status: Completed for the instructor's sample**
+
+Additional generalization testing and the final graphical parse-tree image remain to be completed.
+
+## Group Contributions
+
+### Suneet Ghantaji
+
+- Set up the original ANTLR4 project and GitHub repository.
+- Implemented the initial grammar structure and assignment rules.
+- Added lexer rules for identifiers, numbers, and strings.
+- Added the Deliverable 2 conditional statement structure.
+- Implemented comparison and logical condition grammar rules.
+- Updated the project files and group instructions.
+- Generated and compiled the updated parser.
+- Tested both instructor-provided sample programs.
+- Reviewed and merged the indentation implementation into the main branch.
+
+### Wesley Harpman
+
+- Implemented arithmetic expressions and compound assignment support.
+- Worked on expression precedence.
+- Implemented indentation handling for Deliverable 2.
+- Added Java lexer logic to generate `INDENT` and `DEDENT` tokens.
+- Updated newline and whitespace handling.
+- Pushed the indentation changes through a GitHub feature branch.
+
+### Trevor Potthoff
+
+- Implemented list expressions for Deliverable 1.
+- Added Boolean value support.
+- Contributed to the original grammar development.
+- Assigned to additional Deliverable 2 testing and final parse-tree image preparation.
 
 ## GitHub Collaboration
 
-Group members should work on separate Git branches to reduce conflicts.
+The group uses GitHub to manage the shared project.
 
-Before starting work, pull the latest changes:
+Repository:
+
+https://github.com/Sunnyg08/Ctrl-Alt-Elite-Parser-Project-
+
+Group members use separate feature branches for development and testing.
+
+Typical workflow:
 
 ```bash
+git switch main
 git pull origin main
-```
-
-Create a feature branch:
-
-```bash
 git switch -c feature/your-feature-name
 ```
 
-After completing work, stage and commit the changes:
+After completing changes:
 
 ```bash
 git add LightPython.g4
@@ -199,24 +283,39 @@ git commit -m "Implement grammar feature"
 git push -u origin feature/your-feature-name
 ```
 
-Create a pull request on GitHub to merge completed changes into the main branch.
+A pull request can then be opened to merge changes into `main`.
+
+The completed indentation changes for Deliverable 2 were merged into `main` under commit `6a95ee6`.
 
 ## Submission Requirements
 
-According to the instructor's Deliverable 1 instructions, groups using ANTLR should submit only their completed `.g4` grammar files.
+### Deliverable 1
 
-For this project, the intended submission is:
+The instructor required the ANTLR grammar file:
 
-`LightPython.g4`
+- `LightPython.g4`
 
-The final grammar must successfully parse the instructor's provided sample and support generalized versions of the demonstrated Python syntax.
+The generated Java files and testing files were not required.
 
-The automatically generated Java files, Python sample file, and README are maintained for development and testing but are not required for the ANTLR submission.
+### Deliverable 2
+
+The instructor requires two files:
+
+1. `LightPython.g4` – Completed Deliverable 2 grammar.
+2. Parse-tree image – Graphical representation of the complete `project_deliverable_2.py` sample.
+
+The test Python files, generated Java files, README, and group task instructions are maintained in the repository but are not required for Canvas submission.
 
 ## Project Status
 
-**In Progress – Initial ANTLR4 Grammar Completed**
+**Deliverable 1: Completed and tested**
 
-Basic assignment parsing has been implemented and successfully tested.
+**Deliverable 2: Grammar implementation completed and instructor sample tested successfully**
 
-Arithmetic expressions, compound assignments, list syntax, Boolean values, and full-sample verification remain to be completed before final submission.
+Remaining tasks for Deliverable 2:
+
+- Complete additional generalization tests.
+- Generate and save the full graphical parse-tree image.
+- Submit `LightPython.g4` and the parse-tree image to Canvas.
+
+The project grammar is available on the GitHub `main` branch and has successfully parsed both instructor-provided samples without reported syntax errors.
