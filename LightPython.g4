@@ -388,8 +388,8 @@ WS
 
 // ---------------------------------------
 // Part 6: Testing
-// Deliverable 1: Group Members
-// Deliverable 2: Trevor and Group
+// Deliverable 1: Trevor
+// Deliverable 2: Trevor
 // ---------------------------------------
 
 // Deliverable 1:
@@ -397,10 +397,7 @@ WS
 // All 21 statements parsed successfully.
 //
 // Deliverable 2:
-// TODO - Test project_deliverable_2.py.
-// Check if, elif, else, and indentation.
-// Test additional conditional statements.
-// Generate a parse tree image.
-//
-// Final testing will be completed after
-// the indentation rules are implemented.
+// Tested project_deliverable_2.py.
+// Checked if, elif, else, and indentation.
+// Tested additional conditional statements.
+// Generated a parse tree image.
